@@ -67,7 +67,7 @@ dataset %>%
 # 1. Load Libraries ------------------------------------------------------------
 library(tidyverse)
 library(irr)        # For ICC calculation
-library(BlandAltmanLeh) # For Bland-Altman plots
+#library(BlandAltmanLeh) # For Bland-Altman plots
 
 # 2. Data Cleaning & Geometric QC ---------------------------------------------
 # Verify identity PI = PT + SS (tolerance +/- 2 degrees for manual rounding)
@@ -421,3 +421,30 @@ print(anova(lmm_fit))
 
 cat("\n--- Model Coefficients & Fixed Effects ---\n")
 print(summary(lmm_fit))
+
+
+#Identify patients with high differences----
+library(dplyr)
+
+# 1. For a single dataset (e.g., your original dataset) ------------------------
+patients_diff_gt_10 <- dataset %>%
+  mutate(
+    pi_diff  = pi_tele - pi_focal,
+    abs_diff = abs(pi_diff)
+  ) %>%
+  filter(abs_diff > 10) %>%
+  arrange(desc(abs_diff)) %>%
+  select(nombre_paciente, pi_tele, pi_focal, pi_diff)
+
+print(patients_diff_gt_10)
+
+flagged_cases <- df_paired %>%
+  mutate(
+    discrepancy_tele  = abs(pi_tele_daniel - pi_tele_xavi),
+    discrepancy_focal = abs(pi_focal_daniel - pi_focal_xavi)
+  ) %>%
+  filter(discrepancy_tele > 10 | discrepancy_focal > 10 | abs(diff_modality_daniel) > 15 | abs(diff_modality_xavi) > 15) %>%
+  select(nombre_paciente, pi_tele_daniel, pi_tele_xavi, pi_focal_daniel, pi_focal_xavi, diff_modality_daniel, diff_modality_xavi)
+
+cat("\n--- Cases with Divergence > 10° Between Raters or > 15° Between Modalities ---\n")
+print(flagged_cases)

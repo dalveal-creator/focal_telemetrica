@@ -1,0 +1,15 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+writeLines(c(".Rproj.user",".Rhistory",".RData",".Ruserdata",
+"# --- patient data: never commit ---",
+"*.csv","*.tsv","*.xlsx","*.xls","*.rds",
+"data_local/","output/",
+"# --- per-machine path config ---",
+"config_local.R"), ".gitignore")
+config_local.R
